@@ -1,0 +1,7 @@
+{
+    "id":"widgetbox","version":"1.0",
+    "name":"WidgetBox","description":"Yoink package that adds widgets to the Windows93 desktop.",
+    "dependencies":[],
+    "apps":[],
+    "source":false
+}
