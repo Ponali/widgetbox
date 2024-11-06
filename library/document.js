@@ -24,8 +24,7 @@ function addWidgetBoxElement(){
         desktopElem.appendChild(elem);
         elem.style.width="100%";
         elem.style.height="100%";
-        elem.style.top="0px";
-        elem.style.left="0px";
+        setElemPosition(elem,0,0,0,0);
         elem.style.margin="0";
         elem.style.padding="0";
         elem.style.pointerEvents="none";
@@ -53,6 +52,43 @@ function waitForDesktopReady(){
     })
 }
 
+function getContainerDimensions(){
+    let domrect=getContainer().getBoundingClientRect();
+    let {width,height} = domrect;
+    return [width,height];
+}
+
+function getRelativePosition(x,y){
+    let [mainWidth,mainHeight] = getContainerDimensions();
+    let halfWidth=mainWidth/2;
+    let halfHeight=mainHeight/2;
+    if(x>halfWidth)  x=(x-halfWidth )-halfWidth;
+    if(y>halfHeight) y=(y-halfHeight)-halfHeight;
+    if(x<-halfWidth) x=(x+halfWidth )+halfWidth;
+    if(y<-halfHeight)y=(y+halfHeight)+halfHeight;
+    return [x,y];
+}
+
+function setElemPosition(element,x,y,width,height){
+    console.log(x,y);
+    [x,y]=getRelativePosition(x,y);
+    console.log(x,y);
+    if(x>=0){
+        element.style.left=x+"px";
+        element.style.right="";
+    } else {
+        element.style.left="";
+        element.style.right=(-x-width)+"px";
+    }
+    if(y>=0){
+        element.style.top=y+"px";
+        element.style.bottom="";
+    } else {
+        element.style.top="";
+        element.style.bottom=(-y-height)+"px";
+    }
+}
+
 function showWidgetToDocument(dimensions,widgetData){
     waitForDesktopReady().then(()=>{
         if(widgetData.fixedSize||(!dimensions.width))  dimensions.width =widgetData.defaultWidth;
@@ -62,8 +98,7 @@ function showWidgetToDocument(dimensions,widgetData){
         widgetElement.id="wb_widget_"+widgetData.id;
 
         widgetElement.setAttribute("tabindex","0") // allows element to have key inputs
-        widgetElement.style.left=dimensions.x+"px";
-        widgetElement.style.top=dimensions.y+"px";
+        setElemPosition(widgetElement,dimensions.x,dimensions.y,dimensions.width,dimensions.height);
         widgetElement.style.width=dimensions.width+"px";
         widgetElement.style.height=dimensions.height+"px";
         widgetElement.style.position="absolute";
@@ -104,8 +139,7 @@ function showWidgetToDocument(dimensions,widgetData){
 
                 let diffX=e.clientX-dragPos[0];
                 let diffY=e.clientY-dragPos[1];
-                dimensions.x=dragPos[2]+diffX;
-                dimensions.y=dragPos[3]+diffY;
+                [dimensions.x,dimensions.y]=getRelativePosition(dragPos[2]+diffX,dragPos[3]+diffY);
 
                 if(oldDimensions[0]!=dimensions.x||oldDimensions[1]!=dimensions.y) saveDimensions(dimensions);
                 // if still in widget, put back sidebar
@@ -119,8 +153,7 @@ function showWidgetToDocument(dimensions,widgetData){
             if(dragging){
                 let diffX=e.clientX-dragPos[0];
                 let diffY=e.clientY-dragPos[1];
-                widgetElement.style.left=(dragPos[2]+diffX)+"px";
-                widgetElement.style.top=(dragPos[3]+diffY)+"px";
+                setElemPosition(widgetElement,dragPos[2]+diffX,dragPos[3]+diffY,dimensions.width,dimensions.height)
                 //console.log("dragging")
             } else {
                 //console.log("moving but not dragging")
@@ -141,8 +174,7 @@ function showWidgetToDocument(dimensions,widgetData){
                 let elem=document.createElement("button");
                 elem.innerHTML=`<img src="${icon}"></img>`;
                 elem.style.position="absolute";
-                elem.style.left=(dimensions.x-26)+"px";
-                elem.style.top=(dimensions.y+yOffset)+"px";
+                setElemPosition(elem,dimensions.x-26,dimensions.y+yOffset,26,21) // if the dimensions are from the widget it will fuck up
                 elem.style.width=16;
                 elem.style.height=16;
                 elem.style.padding="1px 4px";
