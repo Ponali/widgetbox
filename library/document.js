@@ -174,7 +174,7 @@ function showWidgetToDocument(dimensions,widgetData){
                 let elem=document.createElement("button");
                 elem.innerHTML=`<img src="${icon}"></img>`;
                 elem.style.position="absolute";
-                setElemPosition(elem,dimensions.x-26,dimensions.y+yOffset,26,21) // if the dimensions are from the widget it will fuck up
+                setElemPosition(elem,dimensions.x,dimensions.y+yOffset,26,21) // if the dimensions are from the widget it will fuck up
                 elem.style.width=16;
                 elem.style.height=16;
                 elem.style.padding="1px 4px";

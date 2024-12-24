@@ -16,6 +16,8 @@ function getSettingsFromElem(elem,widget){
     function getValueFromNode(type,node){
         switch(type){
             case "choose": return +node.querySelector("select").value.slice(3);
+            case "checkbox": return node.querySelector("input").checked;
+            case "textline": return ""+node.querySelector("input").value;
             default: throw new Error("Cannot get value from type "+type);
         }
     }
@@ -52,6 +54,20 @@ function makeConfigBody(body,widget){
                         };
                         selectElem.setAttribute("value","opt"+currentOption);
                         settingContainer.appendChild(selectElem);
+                        break;
+                    }
+                    case "checkbox":{
+                        let elem=document.createElement("input");
+                        elem.setAttribute("type","checkbox");
+                        if(values[a[0]]) elem.setAttribute("checked","");
+                        settingContainer.appendChild(elem);
+                        break;
+                    }
+                    case "textline":{
+                        let elem=document.createElement("input");
+                        elem.setAttribute("type","text");
+                        elem.value=values[a[0]];
+                        settingContainer.appendChild(elem);
                         break;
                     }
                     default:{

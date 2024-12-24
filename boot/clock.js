@@ -5,7 +5,7 @@ library.widgetbox.addWidgetToSession({
     defaultHeight:43,
     fixedSize:true,
     handleElement:(element,settings)=>{
-        let {rightTopElement, rightBottomElement, fontLeft, fontRight, dateFormat} = settings;
+        let {rightTopElement, rightBottomElement, fontLeft, fontRight, dateFormat, useShadow, textShadowCSS} = settings;
         function addFontStyles(){
             let style=document.createElement("style");
             /* 7-segment font */ style.innerHTML+="@font-face {\n\tfont-family: SegmentedFont;\n\tsrc: url(https://torinak.com/font/7segment.ttf) format(\'truetype\'),\n\t\turl(https://torinak.com/font/7segment.woff) format(\'woff\');\n}"
@@ -19,7 +19,11 @@ library.widgetbox.addWidgetToSession({
         mainElem.style.textAlign="center";
         mainElem.style.color="black";
         mainElem.style.fontWeight="normal";
-        mainElem.style.textShadow="2px 2px 2px #888";
+        if(useShadow){
+            mainElem.style.textShadow=textShadowCSS || "2px 2px 2px #888";
+        } else {
+            mainElem.style.textShadow="none";
+        }
         let textElem=document.createElement("span");
         textElem.style.fontSize="24px";
         let subElem=document.createElement("span");
@@ -136,6 +140,16 @@ library.widgetbox.addWidgetToSession({
             "type":"choose",
             "options":["System Default","7-Segment (torinak.com)"],
             "default":0
+        },
+        "useShadow":{
+            "title":"Text shadow",
+            "type":"checkbox",
+            "default":true
+        },
+        "textShadowCSS":{
+            "title":"Text shadow CSS (if enabled)",
+            "type":"textline",
+            "default":"2px 2px 2px #888"
         }
     }
 })
